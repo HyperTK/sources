@@ -2,8 +2,8 @@
 #!/usr/bin/python3
 
 from smbus2 import SMBus
-import time
 from datetime import datetime
+import time
 
 bus_number  = 1
 i2c_address = 0x76
@@ -17,68 +17,68 @@ digH = []
 
 t_fine = 0.0
 
-
 def writeReg(reg_address, data):
-	bus.write_byte_data(i2c_address,reg_address,data)
+    bus.write_byte_data(i2c_address,reg_address,data)
 
 # キャリブレーションパラメータを取得
 def get_calib_param():
-	calib = []
-	
-	for i in range (0x88,0x88+24):
-		calib.append(bus.read_byte_data(i2c_address,i))
-	calib.append(bus.read_byte_data(i2c_address,0xA1))
-	for i in range (0xE1,0xE1+7):
-		calib.append(bus.read_byte_data(i2c_address,i))
+    calib = []
 
-	digT.append((calib[1] << 8) | calib[0])
-	digT.append((calib[3] << 8) | calib[2])
-	digT.append((calib[5] << 8) | calib[4])
-	digP.append((calib[7] << 8) | calib[6])
-	digP.append((calib[9] << 8) | calib[8])
-	digP.append((calib[11]<< 8) | calib[10])
-	digP.append((calib[13]<< 8) | calib[12])
-	digP.append((calib[15]<< 8) | calib[14])
-	digP.append((calib[17]<< 8) | calib[16])
-	digP.append((calib[19]<< 8) | calib[18])
-	digP.append((calib[21]<< 8) | calib[20])
-	digP.append((calib[23]<< 8) | calib[22])
-	digH.append( calib[24] )
-	digH.append((calib[26]<< 8) | calib[25])
-	digH.append( calib[27] )
-	digH.append((calib[28]<< 4) | (0x0F & calib[29]))
-	digH.append((calib[30]<< 4) | ((calib[29] >> 4) & 0x0F))
-	digH.append( calib[31] )
-	
-	for i in range(1,2):
-		if digT[i] & 0x8000:
-			digT[i] = (-digT[i] ^ 0xFFFF) + 1
+    for i in range (0x88,0x88+24):
+            calib.append(bus.read_byte_data(i2c_address,i))
+    calib.append(bus.read_byte_data(i2c_address,0xA1))
+    for i in range (0xE1,0xE1+7):
+            calib.append(bus.read_byte_data(i2c_address,i))
 
-	for i in range(1,8):
-		if digP[i] & 0x8000:
-			digP[i] = (-digP[i] ^ 0xFFFF) + 1
+    digT.append((calib[1] << 8) | calib[0])
+    digT.append((calib[3] << 8) | calib[2])
+    digT.append((calib[5] << 8) | calib[4])
+    digP.append((calib[7] << 8) | calib[6])
+    digP.append((calib[9] << 8) | calib[8])
+    digP.append((calib[11]<< 8) | calib[10])
+    digP.append((calib[13]<< 8) | calib[12])
+    digP.append((calib[15]<< 8) | calib[14])
+    digP.append((calib[17]<< 8) | calib[16])
+    digP.append((calib[19]<< 8) | calib[18])
+    digP.append((calib[21]<< 8) | calib[20])
+    digP.append((calib[23]<< 8) | calib[22])
+    digH.append( calib[24] )
+    digH.append((calib[26]<< 8) | calib[25])
+    digH.append( calib[27] )
+    digH.append((calib[28]<< 4) | (0x0F & calib[29]))
+    digH.append((calib[30]<< 4) | ((calib[29] >> 4) & 0x0F))
+    digH.append( calib[31] )
 
-	for i in range(0,6):
-		if digH[i] & 0x8000:
-			digH[i] = (-digH[i] ^ 0xFFFF) + 1  
+    for i in range(1,2):
+            if digT[i] & 0x8000:
+                    digT[i] = (-digT[i] ^ 0xFFFF) + 1
+
+    for i in range(1,8):
+            if digP[i] & 0x8000:
+                    digP[i] = (-digP[i] ^ 0xFFFF) + 1
+
+    for i in range(0,6):
+            if digH[i] & 0x8000:
+                    digH[i] = (-digH[i] ^ 0xFFFF) + 1
 # 各データを読み取る
 def readData():
-	data = []
-	for i in range (0xF7, 0xF7+8):
-		data.append(bus.read_byte_data(i2c_address,i))
-	pres_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4)
-	temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4)
-	hum_raw  = (data[6] << 8)  |  data[7]
-	
-	# 温度
-	temp = compensate_T(temp_raw)
-	# 気圧
-	pres = compensate_P(pres_raw)
-	# 湿度
-	hum =  compensate_H(hum_raw)
-	# ファイルに書き込む
-	write_file(temp, pres, hum)
-	
+    data = []
+    for i in range (0xF7, 0xF7+8):
+            data.append(bus.read_byte_data(i2c_address,i))
+    pres_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4)
+    temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4)
+    hum_raw  = (data[6] << 8)  |  data[7]
+
+    # 温度
+    temp = compensate_T(temp_raw)
+    # 気圧
+    pres = compensate_P(pres_raw)
+    # 湿度
+    hum =  compensate_H(hum_raw)
+    # ファイルに書き込む
+    write_file(temp, pres, hum)
+
+# テキストファイルに記録
 def write_file(temp, pres, hum):
     # 現在の日時を取得
     time = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
@@ -86,18 +86,18 @@ def write_file(temp, pres, hum):
     data = time + " " + "temp : %-6.2f ℃" % (temp) + " " + "hum : %6.2f ％" % (hum) + " " + "pressure : %7.2f hPa" % (pres/100) + '\n'
     f.write(data)
     f.close()
-    
+
 def compensate_P(adc_P):
 	global  t_fine
 	pressure = 0.0
-	
+
 	v1 = (t_fine / 2.0) - 64000.0
 	v2 = (((v1 / 4.0) * (v1 / 4.0)) / 2048) * digP[5]
 	v2 = v2 + ((v1 * digP[4]) * 2.0)
 	v2 = (v2 / 4.0) + (digP[3] * 65536.0)
 	v1 = (((digP[2] * (((v1 / 4.0) * (v1 / 4.0)) / 8192)) / 8)  + ((digP[1] * v1) / 2.0)) / 262144
 	v1 = ((32768 + v1) * digP[0]) / 32768
-	
+
 	if v1 == 0:
 		return 0
 	pressure = ((1048576 - adc_P) - (v2 / 4096)) * 3125
@@ -107,7 +107,7 @@ def compensate_P(adc_P):
 		pressure = (pressure / v1) * 2
 	v1 = (digP[8] * (((pressure / 8.0) * (pressure / 8.0)) / 8192.0)) / 4096
 	v2 = ((pressure / 4.0) * digP[7]) / 8192.0
-	pressure = pressure + ((v1 + v2 + digP[6]) / 16.0)  
+	pressure = pressure + ((v1 + v2 + digP[6]) / 16.0)
 
 	print("pressure : %7.2f hPa" % (pressure/100))
 	return pressure/100
@@ -164,8 +164,3 @@ if __name__ == '__main__':
 		readData()
 	except KeyboardInterrupt:
 		pass
-
-
-
-
-
