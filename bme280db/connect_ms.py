@@ -27,3 +27,4 @@ class mssql:
             return
 
 if __name__ == '__main__':
+    print("Please, Excecute main program")
