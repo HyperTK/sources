@@ -1,6 +1,7 @@
 [AZURE]
 Description=AZURE
 Driver=/usr/lib/arm-linux-gnueabihf/odbc/libtdsodbc.so
+Driver=/usr/lib/arm-linux-gnueabihf/odbc/libtdsS.so
 Trace=No
 Server=(ServerName) *ex)AZURE (ServerName).database.windows.net
 Database=(DataBaseName)
