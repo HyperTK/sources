@@ -83,7 +83,7 @@ def write_file(temp, pres, hum):
     # 現在の日時を取得
     time = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
     f = open('/home/pi/python/env_data.txt', 'a')
-    data = time + " " + "temp : %-6.2f ℃" % (temp) + " " + "hum : %6.2f ％" % (hum) + " " + "pressure : %7.2f hPa" % (pres/100) + '\n'
+    data = time + " " + "temp : %-6.2f ℃" % (temp) + " " + "hum : %6.2f ％" % (hum) + " " + "pressure : %7.2f hPa" % pres + '\n'
     f.write(data)
     f.close()
 
