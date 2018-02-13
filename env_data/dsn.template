@@ -1,0 +1,10 @@
+[AZURE]
+Description=AZURE
+Driver=/usr/lib/arm-linux-gnueabihf/odbc/libtdsodbc.so
+Driver=/usr/lib/arm-linux-gnueabihf/odbc/libtdsS.so
+Trace=No
+Server=(ServerName) *ex)AZURE (ServerName).database.windows.net
+Database=(DataBaseName)
+Port=1433
+TDS_Version=8.0
+ClientCharset=UTF-8
