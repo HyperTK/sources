@@ -39,7 +39,7 @@ def readLight(addr=DEVICE):
 
 def main():
     print("lux : %6.2flux" % (readLight()))
-    return str(readLight())
+    return str(round(readLight(), 2))
 
 if __name__=="__main__":
    main()
