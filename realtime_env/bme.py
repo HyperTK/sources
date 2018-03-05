@@ -2,7 +2,6 @@
 #!/usr/bin/python3
 
 from smbus2 import SMBus
-from datetime import datetime
 import time
 
 bus_number  = 1
@@ -75,17 +74,6 @@ def readData():
     pres = compensate_P(pres_raw)
     # 湿度
     hum =  compensate_H(hum_raw)
-    # ファイルに書き込む
-    write_file(temp, pres, hum)
-
-# テキストファイルに記録
-def write_file(temp, pres, hum):
-    # 現在の日時を取得
-    time = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
-    f = open('/home/pi/python/env_data.txt', 'a')
-    data = time + " " + "temp : %-6.2f ℃" % (temp) + " " + "hum : %6.2f ％" % (hum) + " " + "pressure : %7.2f hPa" % pres + '\n'
-    f.write(data)
-    f.close()
 
 def compensate_P(adc_P):
 	global  t_fine
@@ -109,7 +97,7 @@ def compensate_P(adc_P):
 	v2 = ((pressure / 4.0) * digP[7]) / 8192.0
 	pressure = pressure + ((v1 + v2 + digP[6]) / 16.0)
 
-	print("%7.2f " % (pressure/100))
+	print("%.2f " % (pressure/100))
 	return pressure/100
 
 def compensate_T(adc_T):
@@ -118,7 +106,7 @@ def compensate_T(adc_T):
 	v2 = (adc_T / 131072.0 - digT[0] / 8192.0) * (adc_T / 131072.0 - digT[0] / 8192.0) * digT[2]
 	t_fine = v1 + v2
 	temperature = t_fine / 5120.0
-	print("%-6.2f " % (temperature))
+	print("%.2f " % (temperature))
 	return temperature
 
 def compensate_H(adc_H):
@@ -133,7 +121,7 @@ def compensate_H(adc_H):
 		var_h = 100.0
 	elif var_h < 0.0:
 		var_h = 0.0
-	print("%6.2f " % (var_h))
+	print("%.2f " % (var_h))
 	return var_h
 
 def setup():

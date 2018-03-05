@@ -10,7 +10,7 @@ def get_weather():
     for weather in data['forecasts']:
         print(weather['dateLabel'] + ':' + weather['telop'])
         # 天気ゲット
-        temp = weather['temperature']
+        temp = weather['temperature']S
         # 最高気温 最低気温
         maxtemp = temp['max']
         mintemp = temp['min']
